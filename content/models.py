@@ -7,7 +7,7 @@ from django.dispatch import receiver
 class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
     title = models.CharField(max_length=250)
-    link = models.CharField(max_length=250, unique=True)
+    link = models.CharField(max_length=250)
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -18,7 +18,7 @@ class Post(models.Model):
         return self.upvotes.amount_of_users
 
     class Meta:
-        ordering = ('upvotes', 'created')
+        ordering = ('-created',)
 
 
 class Comment(models.Model):

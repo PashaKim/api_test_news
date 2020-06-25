@@ -10,17 +10,17 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class PostSerializer(serializers.ModelSerializer):
-    author = UserSerializer()
+    author_name = serializers.CharField(source='author.username', read_only=True)
 
     class Meta:
         model = Post
-        fields = ('id', 'author', 'title', 'link', 'author', 'amount_of_upvotes', 'created')
+        fields = ('id', 'author', 'author_name', 'title', 'link', 'author', 'amount_of_upvotes', 'created')
 
 
 class CommentSerializer(serializers.ModelSerializer):
+    author_name = serializers.CharField(source='author.username', read_only=True)
     post = PostSerializer()
-    author = UserSerializer()
 
     class Meta:
         model = Comment
-        fields = ('id', 'post', 'author', 'content', 'created')
+        fields = ('id', 'post', 'author', 'author_name', 'content', 'created')

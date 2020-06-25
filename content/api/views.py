@@ -7,6 +7,14 @@ from .serializers import CommentSerializer, PostSerializer, UserSerializer
 from content.models import Comment, Post, Upvote
 
 
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+
+
+class CsrfExemptSessionAuthentication(SessionAuthentication):
+    def enforce_csrf(self, request):
+        return
+
+
 class IsAuthorOrReadOnly(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         if request.method in permissions.SAFE_METHODS:
@@ -15,15 +23,23 @@ class IsAuthorOrReadOnly(permissions.BasePermission):
 
 
 class UserViewSet(viewsets.ModelViewSet):
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
     permission_classes = [IsAuthorOrReadOnly]
     serializer_class = UserSerializer
     queryset = User.objects.all()
 
 
 class PostViewSet(viewsets.ModelViewSet):
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
     permission_classes = [IsAuthorOrReadOnly]
     serializer_class = PostSerializer
     queryset = Post.objects.all()
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
+
+    def perform_update(self, serializer):
+        serializer.save(author=self.request.user)
 
     @action(detail=True, methods=['get'])
     def add_upvote(self, request, pk):
@@ -32,6 +48,13 @@ class PostViewSet(viewsets.ModelViewSet):
 
 
 class CommentViewSet(viewsets.ModelViewSet):
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
     permission_classes = [IsAuthorOrReadOnly]
     serializer_class = CommentSerializer
     queryset = Comment.objects.all()
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
+
+    def perform_update(self, serializer):
+        serializer.save(author=self.request.user)
