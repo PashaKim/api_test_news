@@ -4,7 +4,7 @@ from .models import Post, Comment, Upvote
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title', 'author', 'amount_of_upvotes', 'created')
+    list_display = ('id', 'title', 'author', 'link', 'amount_of_upvotes', 'created')
     # prepopulated_fields = {"link": ("title",)}
     raw_id_fields = ('author',)
     list_filter = ('created', )
