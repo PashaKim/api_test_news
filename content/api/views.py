@@ -1,7 +1,10 @@
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, status
 from django.contrib.auth.models import User
+from rest_framework.decorators import action
+from rest_framework.response import Response
+
 from .serializers import CommentSerializer, PostSerializer, UserSerializer
-from content.models import Comment, Post
+from content.models import Comment, Post, Upvote
 
 
 class IsAuthorOrReadOnly(permissions.BasePermission):
@@ -21,6 +24,11 @@ class PostViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthorOrReadOnly]
     serializer_class = PostSerializer
     queryset = Post.objects.all()
+
+    @action(detail=True, methods=['get'])
+    def add_upvote(self, request, pk):
+        Upvote.objects.get(post_id=pk).users.add(request.user)
+        return Response({'detail': 'Success'}, status=status.HTTP_201_CREATED)
 
 
 class CommentViewSet(viewsets.ModelViewSet):
