@@ -13,7 +13,7 @@ class Post(models.Model):
 
     @property
     def amount_of_upvotes(self):
-        return len(self.upvotes.users.all())
+        return self.upvotes.amount_of_users
 
     class Meta:
         ordering = ('upvotes', 'created')
