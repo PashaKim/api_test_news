@@ -18,7 +18,7 @@ class Post(models.Model):
         return self.upvotes.amount_of_users
 
     class Meta:
-        ordering = ('upvotes', 'created')
+        ordering = ('-created',)
 
 
 class Comment(models.Model):
