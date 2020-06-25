@@ -22,9 +22,16 @@ class IsAuthorOrReadOnly(permissions.BasePermission):
         return obj.author == request.user
 
 
+class IsUserOrReadOnly(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        return obj == request.user
+
+
 class UserViewSet(viewsets.ModelViewSet):
     authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
-    permission_classes = [IsAuthorOrReadOnly]
+
     serializer_class = UserSerializer
     queryset = User.objects.all()
 
